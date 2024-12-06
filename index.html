@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Найбільша послідовність з цифрових фрагментів</title>
+</head>
+<body>
+
+<h1>Найбільша послідовність з цифрових фрагментів</h1>
+
+<!-- Вибір файлу -->
+<input type="file" id="fileInput" accept=".txt" onchange="handleFileUpload()">
+<p>Натисніть на кнопку, щоб знайти найбільшу послідовність з фрагментів із завантаженого файлу:</p>
+
+<!-- Кнопка для знаходження послідовності -->
+<button onclick="findLongestChain()">Знайти послідовність</button>
+
+<!-- Результат -->
+<p id="result"></p>
+
+<script>
+    let fragments = [];  // Масив для зберігання фрагментів з файлу
+
+    // Функція для обробки завантаженого файлу
+    function handleFileUpload() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        
+        // Обробка файлу після завантаження
+        reader.onload = function(event) {
+            const content = event.target.result;
+            fragments = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            console.log(fragments);  // Виведення масиву фрагментів у консоль для перевірки
+        };
+
+        // Читання вмісту файлу
+        reader.readAsText(file);
+    }
+
+    // Функція для пошуку найбільшої послідовності
+    function findLongestChain() {
+        if (fragments.length === 0) {
+            document.getElementById("result").textContent = "Будь ласка, завантажте файл із фрагментами.";
+            return;
+        }
+
+        let fragmentsCopy = [...fragments];
+        let chain = fragmentsCopy[0];
+        fragmentsCopy = fragmentsCopy.slice(1);
+
+        while (fragmentsCopy.length > 0) {
+            let matched = false;
+            for (let i = 0; i < fragmentsCopy.length; i++) {
+                if (chain.slice(-2) === fragmentsCopy[i].slice(0, 2)) {
+                    chain += fragmentsCopy[i].slice(2);
+                    fragmentsCopy.splice(i, 1);
+                    matched = true;
+                    break;
+                }
+            }
+
+            if (!matched) {
+                break;
+            }
+        }
+
+        document.getElementById("result").textContent = "Найбільша послідовність: " + chain;
+    }
+</script>
+
+</body>
+</html>
